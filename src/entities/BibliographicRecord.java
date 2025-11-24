@@ -1,0 +1,65 @@
+/**
+ * Represents the bibliographic record associated with a Book.
+ * Used to store classification, ISBN and catalog information.
+ */
+package entities;
+
+public class BibliographicRecord extends Base {
+    private String isbn;
+    private String deweyClass;
+    private String shelfLocation;
+    private String language;
+
+    public BibliographicRecord(Long id, String isbn, String deweyClass, String shelfLocation, String language) {
+        super(id, false);
+        this.isbn = isbn;
+        this.deweyClass = deweyClass;
+        this.shelfLocation = shelfLocation;
+        this.language = language;
+    }
+    
+    public BibliographicRecord() {}
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getDeweyClass() {
+        return deweyClass;
+    }
+
+    public void setDeweyClass(String deweyClass) {
+        this.deweyClass = deweyClass;
+    }
+
+    public String getShelfLocation() {
+        return shelfLocation;
+    }
+
+    public void setShelfLocation(String shelfLocation) {
+        this.shelfLocation = shelfLocation;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    @Override
+    public String toString() {
+        return "BibliographicRecord { " +
+                "id=" + getId() +
+                ", isbn='" + isbn + '\'' +
+                ", deweyClass='" + deweyClass + '\'' +
+                ", shelfLocation='" + shelfLocation + '\'' +
+                ", language='" + language + '\'' +
+                " }";
+    }   
+}

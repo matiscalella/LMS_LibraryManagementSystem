@@ -1,0 +1,65 @@
+# ============================
+# NetBeans / Java Project
+# ============================
+
+# Build directories
+/build/
+/dist/
+/out/
+/target/
+
+# NetBeans specific
+/nbproject/private/
+/nbbuild/
+/nbdist/
+/nbactions.xml
+/nb-configuration.xml
+
+# Compiled classes
+*.class
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+*.iml
+.idea/
+.vscode/
+
+# Maven/Gradle (por si agregás más adelante)
+.mvn/
+.settings/
+.classpath
+.project
+
+# Java specific
+*.jar
+*.war
+*.ear
+
+# UML diagrams exports
+uml/*.svg
+uml/*.vpbackup
+uml/*.vpp.bak
+uml/*.vpp~*
+
+# Database temp files
+*.sql~
+*.db
+
+# PDF or docs cache
+docs/*.aux
+docs/*.toc
+docs/*.log
+
+# Prevent accidental uploads of sensitive config
+*.properties
