@@ -9,6 +9,7 @@ public class BibliographicRecord extends Base {
     private String deweyClass;
     private String shelfLocation;
     private String language;
+    private Long bookId;
 
     public BibliographicRecord(Long id, String isbn, String deweyClass, String shelfLocation, String language) {
         super(id, false);
@@ -51,6 +52,10 @@ public class BibliographicRecord extends Base {
     public void setLanguage(String language) {
         this.language = language;
     }
+    
+    public Long getBookId() { return bookId; }
+    
+    public void setBookId(Long bookId) { this.bookId = bookId; }
 
     @Override
     public String toString() {
