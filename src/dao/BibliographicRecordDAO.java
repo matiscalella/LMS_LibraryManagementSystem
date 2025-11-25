@@ -4,8 +4,13 @@ package dao;
 import entities.BibliographicRecord;
 import config.DatabaseConnection;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
+import java.sql.Types;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class BibliographicRecordDAO implements GenericDAO<BibliographicRecord> {
 
@@ -71,25 +76,117 @@ public class BibliographicRecordDAO implements GenericDAO<BibliographicRecord> {
     }
     
 // ---------- Transactional overloads (using external Connection) ----------
-    
+    /**
+     * Inserts a Bibliographic Record using an existing Connection.
+     */
     public void create(BibliographicRecord bibliographicRecord, Connection conn) throws SQLException {
-        
+        try (PreparedStatement ps = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setBoolean(1, bibliographicRecord.isDeleted());
+            ps.setString(2, bibliographicRecord.getIsbn());
+            ps.setString(3, bibliographicRecord.getDeweyClass());
+            ps.setString(4, bibliographicRecord.getShelfLocation());
+            ps.setString(5, bibliographicRecord.getLanguage());
+            if (bibliographicRecord.getBookId() != null) {
+                ps.setLong(6, bibliographicRecord.getBookId());
+            } else {
+                ps.setNull(6, Types.BIGINT);
+            }
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    long id = rs.getLong(1);
+                    bibliographicRecord.setId(id);
+                }
+            }
+        }
     }
 
+    /**
+     * Finds a Bibliographic Record by ID using an existing Connection.
+     */
     public BibliographicRecord findById(Long id, Connection conn) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public List<BibliographicRecord> findAll(Connection conn) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void update(BibliographicRecord bibliographicRecord, Connection conn) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void delete(Long id, Connection conn) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try (PreparedStatement ps = conn.prepareStatement(SELECT_BY_ID_SQL)) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return buildBibliographicRecordFromResultSet(rs);
+                }
+            }
+        }
+        return null;
     }
     
+    /**
+     * Lists all Bibliographic Records using an existing Connection.
+     */
+    public List<BibliographicRecord> findAll(Connection conn) throws SQLException {
+        List<BibliographicRecord> bibliographicRecords = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(SELECT_ALL_SQL);
+        ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                BibliographicRecord bibliographicRecord = buildBibliographicRecordFromResultSet(rs);
+                bibliographicRecords.add(bibliographicRecord);
+            }
+        }
+        return bibliographicRecords;
+    }
+    
+    /**
+     * Updates a Bibliographic Record using an existing Connection.
+     */
+    public void update(BibliographicRecord bibliographicRecord, Connection conn) throws SQLException {
+        if (bibliographicRecord.getId()== null) {
+            throw new IllegalArgumentException("Bibliographic Record ID cannot be null for update.");
+        }
+        try (PreparedStatement ps = conn.prepareStatement(UPDATE_SQL)) {
+            ps.setBoolean(1, bibliographicRecord.isDeleted());
+            ps.setString(2, bibliographicRecord.getIsbn());
+            ps.setString(3, bibliographicRecord.getDeweyClass());
+            ps.setString(4, bibliographicRecord.getShelfLocation());
+            ps.setString(5, bibliographicRecord.getLanguage());
+            if (bibliographicRecord.getBookId() != null) {
+                ps.setLong(6, bibliographicRecord.getBookId());
+            } else {
+                ps.setNull(6, Types.BIGINT);
+            }
+            ps.setLong(7, bibliographicRecord.getId());
+            ps.executeUpdate();
+        }
+    }
+    
+    /**
+     * Logical delete using an existing Connection.
+     */
+    public void delete(Long id, Connection conn) throws SQLException {
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null for delete.");
+        }
+        try (PreparedStatement ps = conn.prepareStatement(LOGICAL_DELETE_SQL)) {
+            ps.setLong(1, id);
+            ps.executeUpdate();
+        }
+    }
+    
+    /**
+    * Builds a Bibliographic Record from the current row of the ResultSet.
+    */
+    private BibliographicRecord buildBibliographicRecordFromResultSet(ResultSet rs) throws SQLException {
+        BibliographicRecord bibliographicRecord = new BibliographicRecord();
+
+        // ------ Bibliographic Record fields ------
+        bibliographicRecord.setId(rs.getLong("br_id"));
+        bibliographicRecord.setDeleted(rs.getBoolean("br_deleted"));
+        bibliographicRecord.setIsbn(rs.getString("br_isbn"));
+        bibliographicRecord.setDeweyClass(rs.getString("br_dewey_class"));
+        bibliographicRecord.setShelfLocation(rs.getString("br_shelf_location"));
+        bibliographicRecord.setLanguage(rs.getString("br_language"));
+        long fk = rs.getLong("br_book_id");
+         if (rs.wasNull()) { 
+             bibliographicRecord.setBookId(null); 
+         } else { 
+             bibliographicRecord.setBookId(fk); 
+         }
+        return bibliographicRecord;
+    }
+
 }
