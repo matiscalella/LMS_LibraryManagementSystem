@@ -15,24 +15,24 @@ import java.util.ArrayList;
 
 public class BookDAO implements GenericDAO<Book> {
     
-// ----------- SQL sentences
+// ----------- SQL statements
     private static final String INSERT_SQL = "INSERT INTO books (deleted, title, author, publisher, publication_year" +
             "VALUES (?, ?, ?, ?, ?, ?)";
     
     private static final String SELECT_BY_ID_SQL =
         "SELECT " +
-        "  b.id              AS book_id, " +
-        "  b.deleted         AS book_deleted, " +
-        "  b.title           AS book_title, " +
-        "  b.author          AS book_author, " +
-        "  b.publisher       AS book_publisher, " +
+        "  b.id AS book_id, " +
+        "  b.deleted AS book_deleted, " +
+        "  b.title AS book_title, " +
+        "  b.author AS book_author, " +
+        "  b.publisher AS book_publisher, " +
         "  b.publication_year AS book_publication_year, " +
-        "  br.id             AS br_id, " +
-        "  br.deleted        AS br_deleted, " +
-        "  br.isbn           AS br_isbn, " +
-        "  br.dewey_class    AS br_dewey_class, " +
+        "  br.id AS br_id, " +
+        "  br.deleted AS br_deleted, " +
+        "  br.isbn AS br_isbn, " +
+        "  br.dewey_class AS br_dewey_class, " +
         "  br.shelf_location AS br_shelf_location, " +
-        "  br.language       AS br_language " +
+        "  br.language AS br_language " +
         "FROM books b " +
         "LEFT JOIN bibliographic_records br " +
         "       ON br.book_id = b.id " +
