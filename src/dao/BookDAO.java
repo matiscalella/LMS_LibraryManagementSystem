@@ -85,17 +85,29 @@ public class BookDAO implements GenericDAO<Book> {
 
     @Override
     public List<Book> findAll() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            return findAll(conn);
+        }
     }
 
     @Override
     public void update(Book book) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (book.getId() == null) {
+            throw new IllegalArgumentException("Book ID cannot be null for update.");
+        }
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            update(book, conn);
+        }
     }
 
     @Override
     public void delete(Long id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null for delete.");
+        }
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            delete(id, conn);
+        }
     }
     
 // ---------- Transactional overloads (using external Connection) ----------
