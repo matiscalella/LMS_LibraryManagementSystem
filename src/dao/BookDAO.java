@@ -1,6 +1,7 @@
 
 package dao;
 
+import config.DatabaseConnection;
 import entities.BibliographicRecord;
 import entities.Book;
 import java.sql.SQLException;
@@ -67,12 +68,19 @@ public class BookDAO implements GenericDAO<Book> {
     
     @Override
     public void create(Book book) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            create(book, conn);
+        }
     }
 
     @Override
     public Book findById(Long id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            return findById(id, conn);
+        }
     }
 
     @Override
