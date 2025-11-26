@@ -52,27 +52,46 @@ public class BibliographicRecordDAO implements GenericDAO<BibliographicRecord> {
     
     @Override
     public void create(BibliographicRecord bibliographicRecord) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            create(bibliographicRecord, conn);
+        }
     }
 
     @Override
     public BibliographicRecord findById(Long id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (id == null) {
+            throw new IllegalArgumentException("Bibliographic record ID cannot be null");
+        }
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            return findById(id, conn);
+        }        
     }
 
     @Override
     public List<BibliographicRecord> findAll() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            return findAll(conn);
+        }
     }
 
     @Override
     public void update(BibliographicRecord bibliographicRecord) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (bibliographicRecord.getId() == null) {
+            throw new IllegalArgumentException("Bibliographic record ID cannot be null for update.");
+        }
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            update(bibliographicRecord, conn);
+        }
     }
 
     @Override
     public void delete(Long id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (id == null) {
+            throw new IllegalArgumentException("Bibliographic record ID cannot be null for delete.");
+        }
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            delete(id, conn);
+        }
     }
     
 // ---------- Transactional overloads (using external Connection) ----------
@@ -188,5 +207,4 @@ public class BibliographicRecordDAO implements GenericDAO<BibliographicRecord> {
          }
         return bibliographicRecord;
     }
-
 }
