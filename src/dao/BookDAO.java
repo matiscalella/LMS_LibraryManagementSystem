@@ -144,9 +144,6 @@ public class BookDAO implements GenericDAO<Book> {
      * Finds a Book by ID using an existing Connection.
      */
     public Book findById(Long id, Connection conn) throws SQLException {
-        if (id == null) {
-            throw new IllegalArgumentException("ID cannot be null");
-        }
         try (PreparedStatement ps = conn.prepareStatement(SELECT_BY_ID_SQL)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
