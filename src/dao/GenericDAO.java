@@ -1,7 +1,12 @@
 /**
- * Generic DAO contract for basic CRUD operations.
+ * Generic DAO contract defining the basic CRUD operations
+ * to be implemented by all DAO classes in the system.
  *
- * @param <T> Entity type
+ * <p>This interface abstracts persistence operations for
+ * any entity type, isolating the rest of the application
+ * from JDBC-specific details.</p>
+ *
+ * @param <T> the entity type managed by the DAO
  */
 package dao;
 

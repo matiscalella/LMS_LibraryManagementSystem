@@ -1,4 +1,21 @@
-
+/**
+ * DAO implementation for managing {@link entities.Book} persistence operations.
+ *
+ * <p>This class provides both public CRUD methods, which open and close
+ * their own database connections, and transactional overloads that receive
+ * an existing {@link java.sql.Connection}.</p>
+ *
+ * <p>The BookDAO handles:</p>
+ * <ul>
+ *     <li>CRUD operations for the Book entity</li>
+ *     <li>Mapping of joined data between Book and its associated BibliographicRecord</li>
+ *     <li>Support for 1→1 unidirectional relationship (Book → BibliographicRecord)</li>
+ *     <li>Logical deletes using the <code>deleted</code> flag</li>
+ * </ul>
+ *
+ * <p>This class does not manage transactions directly. Transactional control should be
+ * implemented in the Service layer.</p>
+ */
 package dao;
 
 import config.DatabaseConnection;

@@ -1,4 +1,21 @@
-
+/**
+ * DAO implementation for managing {@link entities.BibliographicRecord}
+ * persistence operations.
+ *
+ * <p>This class exposes CRUD operations for the bibliographic_records table and
+ * provides transactional overloads that reuse an external
+ * {@link java.sql.Connection}.</p>
+ *
+ * <p>The BibliographicRecordDAO handles:</p>
+ * <ul>
+ *     <li>Insert, update, find and logical delete of BibliographicRecord entities</li>
+ *     <li>Mapping of ResultSet rows to fully constructed entity objects</li>
+ *     <li>Management of the foreign key <code>book_id</code> in the 1→1 relationship</li>
+ * </ul>
+ *
+ * <p>This DAO does not manage transactions. Responsibility for commits and rollbacks
+ * belongs to the Service layer.</p>
+ */
 package dao;
 
 import entities.BibliographicRecord;
