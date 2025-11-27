@@ -61,27 +61,152 @@ public class BibliographicRecordServiceImpl implements GenericService<Bibliograp
 
     @Override
     public BibliographicRecord create(BibliographicRecord bibliographicRecord) throws ServiceException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+
+        // Validate fields
+        validateBibliographicRecord(bibliographicRecord);
+
+        // New records cannot have an ID
+        if (bibliographicRecord.getId() != null) {
+            throw new ServiceException("New bibliographic records cannot have a predefined ID.");
+        }
+
+        // bookId must never be assigned manually during create()
+        if (bibliographicRecord.getBookId() != null) {
+            throw new ServiceException("bookId must not be manually assigned when creating a bibliographic record.");
+        }
+
+        bibliographicRecord.setDeleted(false);
+
+        try {
+            bibliographicRecordDAO.create(bibliographicRecord);
+            return bibliographicRecord;
+
+        } catch (SQLException e) {
+            throw new ServiceException("Error creating bibliographic record: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public BibliographicRecord update(BibliographicRecord bibliographicRecord) throws ServiceException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+
+        // Validate general fields
+        validateBibliographicRecord(bibliographicRecord);
+
+        // Validate ID
+        if (bibliographicRecord.getId() == null) {
+            throw new ServiceException("BibliographicRecord ID is required for update.");
+        }
+        if (bibliographicRecord.getId() <= 0) {
+            throw new ServiceException("BibliographicRecord ID must be a positive value.");
+        }
+
+        // Validate existence
+        BibliographicRecord existing = findById(bibliographicRecord.getId());
+        if (existing == null) {
+            throw new ServiceException(
+                "Cannot update: BibliographicRecord with ID " + bibliographicRecord.getId() + " does not exist."
+            );
+        }
+
+        // Cannot update deleted records
+        if (existing.isDeleted()) {
+            throw new ServiceException(
+                "Cannot update: BibliographicRecord with ID " + bibliographicRecord.getId() + " is deleted."
+            );
+        }
+
+        // Ensure bookId cannot be reassigned (1→1 strict rule)
+        if (!java.util.Objects.equals(bibliographicRecord.getBookId(), existing.getBookId())) {
+            throw new ServiceException(
+                "Reassigning this bibliographic record to a different book is not permitted."
+            );
+        }
+
+        try {
+            bibliographicRecordDAO.update(bibliographicRecord);
+            return bibliographicRecord;
+
+        } catch (SQLException e) {
+            throw new ServiceException(
+                "Error updating bibliographic record with ID " + bibliographicRecord.getId() + ": " + e.getMessage(),
+                e
+            );
+        }
     }
+
 
     @Override
     public void delete(Long id) throws ServiceException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+
+        // Validate ID
+        if (id == null) {
+            throw new ServiceException("BibliographicRecord ID cannot be null.");
+        }
+        if (id <= 0) {
+            throw new ServiceException("BibliographicRecord ID must be a positive value.");
+        }
+
+        // Validate existence
+        BibliographicRecord existing = findById(id);
+        if (existing == null) {
+            throw new ServiceException(
+                "Cannot delete: BibliographicRecord with ID " + id + " does not exist."
+            );
+        }
+
+        // Validate not already deleted
+        if (existing.isDeleted()) {
+            throw new ServiceException(
+                "Cannot delete: BibliographicRecord with ID " + id + " is already deleted."
+            );
+        }
+
+        try {
+            // Perform logical delete
+            bibliographicRecordDAO.delete(id);
+
+        } catch (SQLException e) {
+            throw new ServiceException(
+                "Error deleting bibliographic record with ID " + id + ": " + e.getMessage(),
+                e
+            );
+        }
     }
+
 
     @Override
     public BibliographicRecord findById(Long id) throws ServiceException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+
+        // Validate ID
+        if (id == null) {
+            throw new ServiceException("BibliographicRecord ID cannot be null.");
+        }
+        if (id <= 0) {
+            throw new ServiceException("BibliographicRecord ID must be a positive value.");
+        }
+
+        try {
+            return bibliographicRecordDAO.findById(id);
+
+        } catch (SQLException e) {
+            throw new ServiceException(
+                "Error retrieving bibliographic record with ID " + id + ": " + e.getMessage(),
+                e
+            );
+        }
     }
 
     @Override
     public List<BibliographicRecord> findAll() throws ServiceException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        try {
+            return bibliographicRecordDAO.findAll();
+
+        } catch (SQLException e) {
+            throw new ServiceException(
+                "Error retrieving bibliographic record list: " + e.getMessage(),
+                e
+            );
+        }
     }
 
     /**
