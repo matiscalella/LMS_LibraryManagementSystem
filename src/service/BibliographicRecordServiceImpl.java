@@ -1,9 +1,13 @@
 package service;
 
+import config.DatabaseConnection;
+import java.sql.Connection;
 import dao.BibliographicRecordDAO;
+import dao.BookDAO;
 import model.BibliographicRecord;
 import java.sql.SQLException;
 import java.util.List;
+import model.Book;
 
 /**
  * Service implementation responsible for managing {@link BibliographicRecord}
@@ -244,6 +248,41 @@ public class BibliographicRecordServiceImpl implements GenericService<Bibliograp
         // Language (optional)
         if (bibliographicRecord.getLanguage() != null && bibliographicRecord.getLanguage().length() > 30) {
             throw new ServiceException("Language exceeds maximum length (30).");
+        }
+    }
+    
+    public void assignRecordToBook(Long recordId, Long bookId) throws ServiceException {
+        if (recordId == null || bookId == null) {
+            throw new ServiceException("Record ID and Book ID cannot be null.");
+        }
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+
+            // 1. Check that Book exists
+            BookDAO bookDAO = new BookDAO();
+            Book book = bookDAO.findById(bookId, conn);
+            if (book == null) {
+                throw new ServiceException("Book with ID " + bookId + " does not exist.");
+            }
+
+            // 2. Check that BibliographicRecord exists (must use DAO, not service)
+            BibliographicRecord existing = bibliographicRecordDAO.findById(recordId, conn);
+            if (existing == null) {
+                throw new ServiceException("BibliographicRecord with ID " + recordId + " does not exist.");
+            }
+
+            // 3. Ensure bookId is currently null (1→1 invariant)
+            if (existing.getBookId() != null) {
+                throw new ServiceException(
+                    "This BibliographicRecord is already associated with Book ID " + existing.getBookId() + "."
+                );
+            }
+
+            // 4. Assign Book ID
+            bibliographicRecordDAO.updateBookId(recordId, bookId, conn);
+
+        } catch (SQLException e) {
+            throw new ServiceException("Failed to assign record to book: " + e.getMessage(), e);
         }
     }
 }

@@ -61,7 +61,7 @@ public class BibliographicRecordDAO implements GenericDAO<BibliographicRecord> {
     
     private static final String UPDATE_SQL =
         "UPDATE bibliographic_records " +
-        "SET deleted = ?, isbn = ?, dewey_class = ?, shelf_location = ?, language = ?, book_id = ? " +
+        "SET deleted = ?, isbn = ?, dewey_class = ?, shelf_location = ?, language = ? " +
         "WHERE id = ?";
     
     private static final String LOGICAL_DELETE_SQL =
@@ -180,12 +180,7 @@ public class BibliographicRecordDAO implements GenericDAO<BibliographicRecord> {
             ps.setString(3, bibliographicRecord.getDeweyClass());
             ps.setString(4, bibliographicRecord.getShelfLocation());
             ps.setString(5, bibliographicRecord.getLanguage());
-            if (bibliographicRecord.getBookId() != null) {
-                ps.setLong(6, bibliographicRecord.getBookId());
-            } else {
-                ps.setNull(6, Types.BIGINT);
-            }
-            ps.setLong(7, bibliographicRecord.getId());
+            ps.setLong(6, bibliographicRecord.getId());
             ps.executeUpdate();
         }
     }
@@ -202,7 +197,7 @@ public class BibliographicRecordDAO implements GenericDAO<BibliographicRecord> {
             ps.executeUpdate();
         }
     }
-    
+     
     /**
     * Builds a Bibliographic Record from the current row of the ResultSet.
     */
@@ -223,5 +218,18 @@ public class BibliographicRecordDAO implements GenericDAO<BibliographicRecord> {
              bibliographicRecord.setBookId(fk); 
          }
         return bibliographicRecord;
+    }
+    
+    public void updateBookId(Long recordId, Long bookId, Connection conn) throws SQLException {
+        String sql = "UPDATE bibliographic_records SET book_id = ? WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            if (bookId != null) {
+                ps.setLong(1, bookId);
+            } else {
+                ps.setNull(1, Types.BIGINT);
+            }
+            ps.setLong(2, recordId);
+            ps.executeUpdate();
+        }
     }
 }
