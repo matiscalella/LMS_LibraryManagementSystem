@@ -1,5 +1,18 @@
+package dao;
+
+import config.DatabaseConnection;
+import model.BibliographicRecord;
+import model.Book;
+import java.sql.SQLException;
+import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.ArrayList;
 /**
- * DAO implementation for managing {@link entities.Book} persistence operations.
+ * DAO implementation for managing {@link model.Book} persistence operations.
  *
  * <p>This class provides both public CRUD methods, which open and close
  * their own database connections, and transactional overloads that receive
@@ -16,20 +29,6 @@
  * <p>This class does not manage transactions directly. Transactional control should be
  * implemented in the Service layer.</p>
  */
-package dao;
-
-import config.DatabaseConnection;
-import entities.BibliographicRecord;
-import entities.Book;
-import java.sql.SQLException;
-import java.util.List;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.ArrayList;
-
 public class BookDAO implements GenericDAO<Book> {
     
 // ----------- SQL statements

@@ -1,5 +1,18 @@
+package dao;
+
+import model.BibliographicRecord;
+import config.DatabaseConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+import java.sql.Types;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
 /**
- * DAO implementation for managing {@link entities.BibliographicRecord}
+ * DAO implementation for managing {@link model.BibliographicRecord}
  * persistence operations.
  *
  * <p>This class exposes CRUD operations for the bibliographic_records table and
@@ -16,19 +29,6 @@
  * <p>This DAO does not manage transactions. Responsibility for commits and rollbacks
  * belongs to the Service layer.</p>
  */
-package dao;
-
-import entities.BibliographicRecord;
-import config.DatabaseConnection;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.sql.Types;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-
 public class BibliographicRecordDAO implements GenericDAO<BibliographicRecord> {
 
 // ----------- SQL statements

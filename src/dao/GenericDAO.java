@@ -1,3 +1,7 @@
+package dao;
+
+import java.sql.SQLException;
+import java.util.List;
 /**
  * Generic DAO contract defining the basic CRUD operations
  * to be implemented by all DAO classes in the system.
@@ -8,11 +12,6 @@
  *
  * @param <T> the entity type managed by the DAO
  */
-package dao;
-
-import java.sql.SQLException;
-import java.util.List;
-
 public interface GenericDAO<T> {
     void create(T entity) throws SQLException;
     T findById(Long id) throws SQLException;
