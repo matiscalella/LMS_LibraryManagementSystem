@@ -1,6 +1,7 @@
 package service;
 
 import dao.BookDAO;
+import java.sql.SQLException;
 import model.Book;
 import java.util.List;
 import java.time.LocalDate;
@@ -34,28 +35,100 @@ public class BookServiceImpl implements GenericService<Book> {
     }
 
     @Override
-    public Book create(Book entity) throws ServiceException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public Book create(Book book) throws ServiceException {
+        validateBook(book);
+        if (book.getId() != null) {
+            throw new ServiceException("New books cannot have a predefined ID.");
+        }
+        book.setDeleted(false);
+        try {
+            // Delegate persistence to DAO
+            bookDAO.create(book);
+            // DAO populates the generated ID inside the same object
+            return book;
+
+        } catch (SQLException e) {
+            throw new ServiceException("Error creating book: " + e.getMessage(), e);
+        }
     }
 
     @Override
-    public Book update(Book entity) throws ServiceException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public Book update(Book book) throws ServiceException {
+
+        // Validate object content
+        validateBook(book);
+
+        // Validate ID
+        if (book.getId() == null) {
+            throw new ServiceException("Book ID is required for update.");
+        }
+        if (book.getId() <= 0) {
+            throw new ServiceException("Book ID must be a positive value.");
+        }
+
+        // Validate that the book exists
+        Book existing = findById(book.getId());
+        if (existing == null) {
+            throw new ServiceException("Cannot update: Book with ID " + book.getId() + " does not exist.");
+        }
+
+        try {
+            // Delegate persistence to DAO
+            bookDAO.update(book);
+
+            // Return updated entity
+            return book;
+
+        } catch (SQLException e) {
+            throw new ServiceException("Error updating book: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public void delete(Long id) throws ServiceException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        // Validate ID
+        if (id == null) {
+            throw new ServiceException("Book ID cannot be null.");
+        }
+        if (id <= 0) {
+            throw new ServiceException("Book ID must be a positive value.");
+        }
+        // Validate existence
+        Book existing = findById(id);
+        if (existing == null) {
+            throw new ServiceException("Cannot delete: Book with ID " + id + " does not exist.");
+        }
+        try {
+            // Delegate logical delete to DAO
+            bookDAO.delete(id);
+            
+        } catch (SQLException e) {
+            throw new ServiceException("Error deleting book: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public Book findById(Long id) throws ServiceException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        if (id == null) {
+            throw new ServiceException("Book ID cannot be null.");
+        }
+        if (id <= 0) {
+            throw new ServiceException("Book ID must be a positive value.");
+        }
+        try {
+            return bookDAO.findById(id);
+        } catch (SQLException e) {
+            throw new ServiceException("Error retrieving book with ID " + id + ": " + e.getMessage(), e);
+        }
     }
 
     @Override
     public List<Book> findAll() throws ServiceException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        try {
+            return bookDAO.findAll();
+        } catch (SQLException e) {
+            throw new ServiceException("Error retrieving book list.", e);
+        }
     }
     
     private void validateBook(Book book) throws ServiceException {
