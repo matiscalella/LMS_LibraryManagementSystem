@@ -18,6 +18,14 @@ public class BibliographicRecord extends Base {
         this.language = language;
     }
     
+    public BibliographicRecord(Long id, boolean deleted, String isbn, String deweyClass, String shelfLocation, String language, Long bookId) {
+        super(id, deleted);
+        this.isbn = isbn;
+        this.deweyClass = deweyClass;
+        this.shelfLocation = shelfLocation;
+        this.language = language;
+        this.bookId = bookId;
+    }
     public BibliographicRecord() {}
 
     public String getIsbn() {

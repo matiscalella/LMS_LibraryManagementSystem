@@ -19,6 +19,16 @@ public class Book extends Base {
         this.bibliographicRecord = bibliographicRecord;
     }
     
+    public Book(Long id, boolean deleted, String title, String author, String publisher, Integer publicationYear) {
+
+    super(id, deleted);
+    this.title = title;
+    this.author = author;
+    this.publisher = publisher;
+    this.publicationYear = publicationYear;
+    this.bibliographicRecord = null;
+}
+    
     public Book() {}
 
     public String getTitle() {
